@@ -1,0 +1,101 @@
+/* chat-frontend/pages/ChatPage.css */
+.chat-container {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.inbox {
+  width: 250px;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+  overflow-y: auto;
+  background: #f9f9f9;
+}
+
+.inbox h3 {
+  margin-bottom: 10px;
+}
+
+.inbox ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.inbox li {
+  padding: 8px;
+  margin-bottom: 5px;
+  background-color: #e2e2e2;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.inbox li:hover {
+  background-color: #d4d4d4;
+}
+
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  position: relative;
+}
+
+.empty-chat {
+  flex: 1;
+  border: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 1.2rem;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.message {
+  margin: 5px 0;
+  max-width: 60%;
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.message.me {
+  align-self: flex-end;
+  background-color: #dcf8c6;
+}
+
+.message.other {
+  align-self: flex-start;
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+
+.message .timestamp {
+  font-size: 0.7rem;
+  color: #666;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.message-input {
+  display: flex;
+  gap: 10px;
+}
+
+.message-input input {
+  flex: 1;
+  padding: 10px;
+}
+
+.message-input button {
+  padding: 10px 20px;
+}

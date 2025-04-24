@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MessageService {
@@ -71,6 +72,15 @@ public class MessageService {
         }
 
         return dto;
+    }
+
+    public void deleteMessageById(Long id) {
+        Optional<Message> messageOptional = messageRepository.findById(id);
+        if (messageOptional.isPresent()) {
+            messageRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Message with ID " + id + " not found.");
+        }
     }
 
 

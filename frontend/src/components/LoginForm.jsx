@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { loginUser, updateOnlineStatus } from "../api/userApi";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function LoginForm() {
-  const [form, setForm] = useState({ username: "", password: "", userId: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -13,13 +13,15 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await loginUser(form);
-      const user = res.data;
-      setForm((prevForm) => ({ ...prevForm, userId: user.id })); // Store userId in form state
-      await updateOnlineStatus(user.id, true);
-      localStorage.setItem("user", JSON.stringify(user)); // Save user session
+      const res = await axios.post("http://localhost:8080/auth/login", form);
+      const { token, user } = res.data;
+
+      // Save user data and token to localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
       setMessage(`Welcome, ${user.username}`);
-      navigate("/dashboard"); // Redirect after login (optional)
+      navigate("/dashboard"); // Redirect to dashboard
     } catch (err) {
       setMessage(err.response?.data || "Login failed.");
     }
@@ -28,8 +30,9 @@ function LoginForm() {
   return (
     <form onSubmit={handleSubmit}>
       <input
-        name="username"
-        placeholder="Username"
+        name="email"
+        type="email"
+        placeholder="Email"
         onChange={handleChange}
         required
       />

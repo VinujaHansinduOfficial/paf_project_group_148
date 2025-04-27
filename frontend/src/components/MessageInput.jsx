@@ -1,5 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
+import Stack from '@mui/material/Stack';
 
 function MessageInput({ senderId, receiverId, onMessageSent }) {
   const [message, setMessage] = useState("");
@@ -30,12 +34,9 @@ function MessageInput({ senderId, receiverId, onMessageSent }) {
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && sendMessage()}
       />
-      <button
-        onClick={sendMessage}
-        className="bg-blue-500 text-white px-4 py-2 rounded-r"
-      >
+      <Button variant="contained" endIcon={<SendIcon />} onClick={sendMessage}>
         Send
-      </button>
+      </Button>
     </div>
   );
 }

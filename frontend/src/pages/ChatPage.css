@@ -58,10 +58,12 @@
   flex: 1;
   overflow-y: auto;
   margin-bottom: 10px;
+  background-color: #f9f9f9;
+  padding: 10px;
 }
 
 .message {
-  margin: 5px 0;
+  margin: 10px 0; /* Increased gap between messages */
   max-width: 60%;
   padding: 10px;
   border-radius: 10px;
@@ -71,6 +73,7 @@
 .message.me {
   align-self: flex-end;
   background-color: #dcf8c6;
+  margin-left: auto; /* Align to the right */
 }
 
 .message.other {
@@ -98,4 +101,10 @@
 
 .message-input button {
   padding: 10px 20px;
+}
+
+.icon-button-container {
+  position: absolute;
+  top: 0;
+  right: 0;
 }

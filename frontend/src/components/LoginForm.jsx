@@ -1,5 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import Card from "@mui/material/Card";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 
 function LoginForm() {
@@ -13,39 +16,68 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8080/auth/login", form);
+      const res = await axios.post("http://localhost:8080/auth/login", form, {
+        headers: { "Content-Type": "application/json" },
+      });
       const { token, user } = res.data;
 
-      // Save user data and token to localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
       setMessage(`Welcome, ${user.username}`);
-      navigate("/dashboard"); // Redirect to dashboard
+      navigate("/chat");
     } catch (err) {
-      setMessage(err.response?.data || "Login failed.");
+      setMessage(err.response?.data?.message || "Login failed.");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        name="email"
-        type="email"
-        placeholder="Email"
-        onChange={handleChange}
-        required
-      />
-      <input
-        name="password"
-        type="password"
-        placeholder="Password"
-        onChange={handleChange}
-        required
-      />
-      <button type="submit">Login</button>
-      <p>{message}</p>
-    </form>
+    <Card
+      variant="outlined"
+      sx={{
+        display: "inline-block",
+        maxWidth: 400,
+        padding: 3,
+      }}
+    >
+      <form onSubmit={handleSubmit}>
+        <TextField
+          name="email"
+          type="email"
+          label="Email"
+          autoComplete="email"
+          placeholder="Email"
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          name="password"
+          type="password"
+          label="Password"
+          autoComplete="current-password"
+          onChange={handleChange}
+          required
+          fullWidth
+          margin="normal"
+        />
+        <Button
+          variant="contained"
+          size="large"
+          fullWidth
+          sx={{ marginTop: 2 }}
+          type="submit"
+        >
+          Login
+        </Button>
+        {message && (
+          <p style={{ marginTop: "1rem", color: "red", textAlign: "center" }}>
+            {message}
+          </p>
+        )}
+      </form>
+    </Card>
   );
 }
 

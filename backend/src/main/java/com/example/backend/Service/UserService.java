@@ -18,6 +18,10 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public Optional<User> findUserById(Long Id) {
+        return userRepository.findById(Id);
+    }
+
     public boolean isUsernameTaken(String username) {
         return userRepository.existsByUsername(username);
     }

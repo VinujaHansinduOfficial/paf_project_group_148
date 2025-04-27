@@ -24,6 +24,11 @@ public class UserController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/uid/{Id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long Id) {
+        Optional<User> user = userService.findUserById(Id);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
         if (userService.isUsernameTaken(user.getUsername())) {

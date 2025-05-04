@@ -42,14 +42,4 @@ public class MessageController {
         return ResponseEntity.ok(messageService.getRecentChats(userId));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteMessage(@PathVariable Long id) {
-        try {
-            messageService.deleteMessageById(id);
-            return ResponseEntity.ok("Message deleted successfully.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        }
-    }
-
 }

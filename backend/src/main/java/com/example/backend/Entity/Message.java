@@ -27,6 +27,7 @@ public class Message {
     @Column(columnDefinition = "TEXT")
     private String encryptedMessage;
 
+    @Column(columnDefinition = "TIMESTAMP", nullable = true)
     private LocalDateTime timestamp;
 
     @OneToOne(mappedBy = "message", cascade = CascadeType.ALL)

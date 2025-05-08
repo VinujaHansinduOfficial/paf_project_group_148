@@ -1,0 +1,50 @@
+/* src/styles/Home.css */
+.home-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  color: #333;
+  text-align: center;
+}
+
+.home-image {
+  width: 80%; /* Adjust the width as needed */
+  max-width: 600px; /* Maximum width to prevent it from becoming too large */
+  height: auto;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+}
+
+.home-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.home-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  width: 200px;
+  font-size: 16px;
+}
+
+.home-btn:hover {
+  background-color: #0056b3;
+}
+
+.home-description {
+  margin-top: 20px;
+  font-size: 18px;
+  line-height: 1.5;
+}

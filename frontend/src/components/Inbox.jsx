@@ -7,10 +7,22 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import { formatDistanceToNow } from "date-fns";
+import { useLocation } from "react-router-dom"; // Add this import
 
 const Inbox = ({ userId, onSelectUser }) => {
+  const location = useLocation(); // Add this hook
+  const [selectedUserId, setSelectedUserId] = useState(null); // Add state for selected user
   const [recentChats, setRecentChats] = useState([]);
   const [usernames, setUsernames] = useState({});
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const preSelectedUserId = queryParams.get("userId");
+    if (preSelectedUserId) {
+      setSelectedUserId(preSelectedUserId);
+      onSelectUser(preSelectedUserId); // Trigger user selection
+    }
+  }, [location.search, onSelectUser]);
 
   useEffect(() => {
     const fetchChats = () => {

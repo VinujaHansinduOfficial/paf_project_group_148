@@ -52,5 +52,21 @@ public class UserService {
         }
         return Optional.empty();
     }
+
+
+    public boolean addFollower(Long userId, Long followerId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (!user.getFollowers().contains(followerId)) {
+                user.getFollowers().add(followerId);
+                userRepository.save(user);
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
 

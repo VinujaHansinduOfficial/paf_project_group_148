@@ -1,84 +1,61 @@
-import { useState } from "react";
-import axios from "axios";
-import Card from "@mui/material/Card";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useAuth } from './AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-function LoginForm() {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [message, setMessage] = useState("");
+const LoginForm = () => {
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
     try {
-      const res = await axios.post("http://localhost:8080/auth/login", form, {
-        headers: { "Content-Type": "application/json" },
+      const response = await axios.post('http://localhost:8080/auth/login', {
+        email,
+        password,
       });
-      const { token, user } = res.data;
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      setMessage(`Welcome, ${user.username}`);
-      navigate("/chat");
+      const { token, user } = response.data;
+      login(user, token);
+      alert('Login successful!');
+      navigate('/chat');
     } catch (err) {
-      setMessage(err.response?.data?.message || "Login failed.");
+      setError('Invalid email or password');
     }
   };
 
   return (
-    <Card
-      variant="outlined"
-      sx={{
-        display: "inline-block",
-        maxWidth: 400,
-        padding: 3,
-      }}
-    >
+    <div style={{ maxWidth: 400, margin: 'auto' }}>
+      <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <TextField
-          name="email"
+        <label>Email:</label><br />
+        <input
           type="email"
-          label="Email"
-          autoComplete="email"
-          placeholder="Email"
-          onChange={handleChange}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          name="password"
+        /><br />
+
+        <label>Password:</label><br />
+        <input
           type="password"
-          label="Password"
-          autoComplete="current-password"
-          onChange={handleChange}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           required
-          fullWidth
-          margin="normal"
-        />
-        <Button
-          variant="contained"
-          size="large"
-          fullWidth
-          sx={{ marginTop: 2 }}
-          type="submit"
-        >
-          Login
-        </Button>
-        {message && (
-          <p style={{ marginTop: "1rem", color: "red", textAlign: "center" }}>
-            {message}
-          </p>
-        )}
+        /><br />
+
+        <button type="submit">Login</button>
+
+        {error && <p style={{ color: 'red' }}>{error}</p>}
       </form>
-    </Card>
+    </div>
   );
-}
+};
 
 export default LoginForm;

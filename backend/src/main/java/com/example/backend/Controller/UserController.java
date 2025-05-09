@@ -57,4 +57,17 @@ public class UserController {
         return ResponseEntity.status(401).body("Invalid username or password.");
     }
 
+    @PostMapping("/{userId}/add-follower")
+    public ResponseEntity<String> addFollower(
+            @PathVariable Long userId,
+            @RequestParam Long followerId) {
+
+        boolean added = userService.addFollower(userId, followerId);
+        if (added) {
+            return ResponseEntity.ok("Follower added successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("Unable to add follower. User may not exist or follower already added.");
+        }
+    }
+
 }

@@ -74,5 +74,27 @@ public class MessageService {
     }
 
 
+    public Message updateMessage(Long messageId, String newContent) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+
+        // Encrypt the message content before saving
+        String encrypted = EncryptionUtil.encrypt(newContent);
+        message.setEncryptedMessage(encrypted);
+        message.setTimestamp(LocalDateTime.now());
+
+        return messageRepository.save(message);
+    }
+
+
+    // com.example.backend.Service.MessageService.java
+
+    public void deleteMessage(Long messageId) {
+        if (!messageRepository.existsById(messageId)) {
+            throw new RuntimeException("Message not found with ID: " + messageId);
+        }
+        messageRepository.deleteById(messageId);
+    }
+
 }
 

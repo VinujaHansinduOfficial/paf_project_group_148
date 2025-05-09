@@ -1,55 +1,86 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Added import
-import { registerUser } from "../api/userApi";
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Added import for navigation
+import "./Register.css";
 
-function RegisterForm() {
-  const [form, setForm] = useState({ username: "", email: "", password: "" });
+const RegisterForm = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    username: "",
+    password: "",
+    email: "",
+    from: ""
+  });
+
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // Added useNavigate hook
+  const navigate = useNavigate(); // Initialize navigate
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [e.target.name]: e.target.value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await registerUser(form);
-      setMessage("User registered successfully!");
-      navigate("/login"); // Navigate to LoginPage
-    } catch (err) {
-      setMessage(err.response?.data || "Error occurred.");
+      const response = await axios.post("http://localhost:8080/users/register", formData);
+      setMessage(response.data);
+      navigate("/login"); // Navigate to login page on success
+    } catch (error) {
+      setMessage(error.response?.data || "Registration failed.");
     }
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="register-container">
+      <h2>Create Account</h2>
+      <form onSubmit={handleSubmit} className="register-form">
         <input
+          type="text"
+          name="name"
+          placeholder="Full Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="text"
           name="username"
           placeholder="Username"
+          value={formData.username}
           onChange={handleChange}
           required
         />
         <input
-          name="email"
           type="email"
-          placeholder="Email"
+          name="email"
+          placeholder="Email Address"
+          value={formData.email}
           onChange={handleChange}
           required
         />
         <input
-          name="password"
           type="password"
+          name="password"
           placeholder="Password"
+          value={formData.password}
           onChange={handleChange}
           required
+        />
+        <input
+          type="text"
+          name="from"
+          placeholder="Where are you from?"
+          value={formData.from}
+          onChange={handleChange}
         />
         <button type="submit">Register</button>
+        {message && <p className="message">{message}</p>}
       </form>
-      <p>{message}</p>
     </div>
   );
-}
+};
 
 export default RegisterForm;

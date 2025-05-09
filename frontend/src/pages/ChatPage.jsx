@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 // chat-frontend/pages/ChatPage.jsx
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../components/AuthContext"; // Import useAuth
 import axios from "axios";
 import Inbox from "../components/Inbox";
 import "./ChatPage.css";
@@ -18,7 +19,7 @@ import ClickAwayListener from "@mui/material/ClickAwayListener";
 import MenuList from "@mui/material/MenuList";
 
 const ChatPage = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { user } = useAuth(); // Get user from AuthContext
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedUsername, setSelectedUsername] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
@@ -141,13 +142,31 @@ const ChatPage = () => {
     if (!lastMessage) return;
 
     axios
-      .delete(`http://localhost:8080/messages/${lastMessage.id}`)
+      .delete(`http://localhost:8080/messages/delete/${lastMessage.id}`)
       .then(() => {
         setChatMessages((prevMessages) =>
           prevMessages.filter((msg) => msg.id !== lastMessage.id)
         );
       })
       .catch((err) => console.error("Failed to delete message", err));
+  };
+
+  const handleUpdateMessage = (messageId, updatedMessage) => {
+    if (!updatedMessage) return;
+
+    axios
+      .put(`http://localhost:8080/messages/update`, {
+        messageId: messageId,
+        newMessage: updatedMessage,
+      })
+      .then(() => {
+        setChatMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg.id === messageId ? { ...msg, message: updatedMessage } : msg
+          )
+        );
+      })
+      .catch((err) => console.error("Failed to update message", err));
   };
 
   return (
@@ -226,6 +245,29 @@ const ChatPage = () => {
                                   >
                                     <MenuItem onClick={handleDeleteLastMessage}>
                                       Delete
+                                    </MenuItem>
+                                    <MenuItem
+                                      onClick={() => {
+                                        const lastMessage = chatMessages
+                                          .filter(
+                                            (msg) => msg.senderId === user.id
+                                          )
+                                          .pop();
+                                        if (lastMessage) {
+                                          const updatedMessage = prompt(
+                                            "Enter the updated message:",
+                                            lastMessage.message
+                                          );
+                                          if (updatedMessage !== null) {
+                                            handleUpdateMessage(
+                                              lastMessage.id,
+                                              updatedMessage
+                                            );
+                                          }
+                                        }
+                                      }}
+                                    >
+                                      Update
                                     </MenuItem>
                                   </MenuList>
                                 </ClickAwayListener>

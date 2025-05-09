@@ -70,4 +70,14 @@ public class UserController {
         }
     }
 
+    @PostMapping("/{userId}/unfollow/{followerId}")
+    public ResponseEntity<String> unfollowUser(@PathVariable Long userId, @PathVariable Long followerId) {
+        boolean success = userService.unfollowUser(userId, followerId);
+        if (success) {
+            return ResponseEntity.ok("Unfollowed successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("Unfollow failed. Either user doesn't exist or follower not found.");
+        }
+    }
+
 }

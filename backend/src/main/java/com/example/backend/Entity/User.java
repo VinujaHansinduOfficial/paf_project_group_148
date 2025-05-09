@@ -37,4 +37,8 @@ public class User {
     @ElementCollection
     @CollectionTable(name = "followers", joinColumns = @JoinColumn(name = "id"))  // ✅ Fixed typo here
     private List<Long> followers = new ArrayList<>();
+
+    public void unfollow(Long userId) {
+        followers.remove(userId);
+    }
 }

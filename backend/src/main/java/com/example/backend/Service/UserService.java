@@ -68,5 +68,18 @@ public class UserService {
 
         return false;
     }
+
+    public boolean unfollowUser(Long userId, Long followerId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user.getFollowers().contains(followerId)) {
+                user.unfollow(followerId); // Calls the method from the Entity
+                userRepository.save(user);
+                return true;
+            }
+        }
+        return false;
+    }
 }
 

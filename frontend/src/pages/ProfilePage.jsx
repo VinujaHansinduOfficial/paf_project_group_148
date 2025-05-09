@@ -11,6 +11,18 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("post");
   const [followers, setFollowers] = useState([]);
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  const checkIfFollowing = async (loggedInUserId, targetUserId) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/users/uid/${loggedInUserId}`);
+      const followerIds = response.data.followers || []; // Extract followers array
+      return followerIds.includes(Number(targetUserId)); // Ensure type consistency for comparison
+    } catch (err) {
+      console.error("Error checking follow status:", err);
+      return false;
+    }
+  };
 
   useEffect(() => {
     axios
@@ -18,6 +30,15 @@ const Profile = () => {
       .then((res) => setUser(res.data))
       .catch((err) => console.error("Error fetching user:", err));
   }, [userId]);
+
+  useEffect(() => {
+    if (loggedInUser?.id && userId) {
+      checkIfFollowing(userId, loggedInUser.id).then((isFollowing) => {
+        console.log(`Is logged-in user following user ${userId}?`, isFollowing); // Log the output
+        setIsFollowing(isFollowing); // Update the button state based on follow status
+      });
+    }
+  }, [loggedInUser, userId]);
 
   useEffect(() => {
     if (activeTab === "followers") {
@@ -37,6 +58,18 @@ const Profile = () => {
     }
   }, [activeTab, userId]);
 
+  useEffect(() => {
+    if (loggedInUser?.id) {
+      axios
+        .get(`http://localhost:8080/users/uid/${loggedInUser.id}`)
+        .then((res) => {
+          const followerIds = res.data.followers || [];
+          setIsFollowing(followerIds.includes(userId)); // Check if the profile user is followed
+        })
+        .catch((err) => console.error("Error fetching logged-in user's followers:", err));
+    }
+  }, [loggedInUser, userId]);
+
   const handleFollow = () => {
     if (!loggedInUser?.id || !userId) {
       alert("Invalid user data.");
@@ -46,12 +79,41 @@ const Profile = () => {
     const targetUserId = userId;
     const followerId = loggedInUser.id;
 
+    const url = isFollowing
+      ? `http://localhost:8080/users/${targetUserId}/remove-follower?followerId=${followerId}`
+      : `http://localhost:8080/users/${targetUserId}/add-follower?followerId=${followerId}`;
+
     axios
-      .post(`http://localhost:8080/users/${targetUserId}/add-follower?followerId=${followerId}`)
-      .then(() => alert("Followed successfully!"))
+      .post(url)
+      .then(() => {
+        setIsFollowing((prev) => !prev); // Toggle follow state
+      })
       .catch((err) => {
-        console.error("Error following user:", err.response?.data || err.message);
-        alert(err.response?.data || "Failed to follow user. Please try again.");
+        console.error("Error updating follow status:", err.response?.data || err.message);
+        alert(err.response?.data || "Failed to update follow status. Please try again.");
+      });
+  };
+
+  const handleUnfollow = () => {
+    if (!loggedInUser?.id || !userId) {
+      alert("Invalid user data.");
+      return;
+    }
+
+    const targetUserId = userId;
+    const followerId = loggedInUser.id;
+
+    const url = `http://localhost:8080/users/${targetUserId}/unfollow/${followerId}`;
+
+    axios
+      .post(url)
+      .then(() => {
+        setIsFollowing(false); // Update state to reflect unfollow
+        alert("Unfollowed successfully!");
+      })
+      .catch((err) => {
+        console.error("Error unfollowing user:", err.response?.data || err.message);
+        alert(err.response?.data || "Failed to unfollow. Please try again.");
       });
   };
 
@@ -72,7 +134,29 @@ const Profile = () => {
         <h3>{user.name}</h3>
         {loggedInUser && loggedInUser.id !== userId && (
           <div className="profile-actions">
-            <button onClick={handleFollow} className="follow-btn">Follow</button>
+            {isFollowing ? (
+              <button
+                onClick={handleUnfollow} // Attach the unfollow function
+                className="unfollow-btn"
+                style={{
+                  backgroundColor: "grey", // Grey for "Unfollow"
+                  color: "white",
+                }}
+              >
+                Unfollow
+              </button>
+            ) : (
+              <button
+                onClick={handleFollow}
+                className="follow-btn"
+                style={{
+                  backgroundColor: "blue", // Blue for "Follow"
+                  color: "white",
+                }}
+              >
+                Follow
+              </button>
+            )}
             <button onClick={handleMessage} className="message-btn">Message</button>
           </div>
         )}

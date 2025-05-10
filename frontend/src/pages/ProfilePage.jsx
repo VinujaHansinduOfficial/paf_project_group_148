@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import "./Profile.css";
+import Post from "../components/Post"; // Adjust the import path as necessary
 
 const Profile = () => {
   const { userId } = useParams();
@@ -132,7 +133,7 @@ const Profile = () => {
           className="profile-img"
         />
         <h3>{user.name}</h3>
-        {loggedInUser && loggedInUser.id !== userId && (
+        {loggedInUser && loggedInUser.id !== Number(userId) && ( // Hide buttons for logged-in user's profile
           <div className="profile-actions">
             {isFollowing ? (
               <button
@@ -178,7 +179,14 @@ const Profile = () => {
         {activeTab === "post" && (
           <div className="user-posts">
             <h2>Posts</h2>
-            <p>Posts will be displayed here.</p>
+            {loggedInUser && loggedInUser.id === Number(userId) ? (
+              <Post postid="2" likecount={5} commentcount={2} />
+            ) : (
+              <div className="user-posts">
+                <h2>Posts</h2>
+                <p>Posts will be displayed here.</p>
+              </div>
+            )}
           </div>
         )}
         {activeTab === "About" && (

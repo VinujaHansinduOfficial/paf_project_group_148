@@ -10,6 +10,7 @@ import com.example.backend.Service.CommentService;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/comments")
 public class CommentController {
     @Autowired

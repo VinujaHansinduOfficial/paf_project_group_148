@@ -10,6 +10,7 @@ import com.example.backend.Service.LikeService;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/likes")
 public class LikeController {
     @Autowired

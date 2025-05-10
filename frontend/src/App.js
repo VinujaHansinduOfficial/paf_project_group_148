@@ -13,6 +13,7 @@ import ChatPage from "./pages/ChatPage";
 import Navbar from "./components/Navbar"; // Import the Navbar component
 import { useAuth } from "./components/AuthContext"; // Import useAuth
 import ProfilePage from "./pages/ProfilePage"; // Import ProfilePage  
+import HomePage from "./pages/HomePage";
 
 function App() {
   const { user } = useAuth(); // Get user from AuthContext
@@ -33,6 +34,10 @@ function App() {
           element={user ? <ChatPage /> : <Navigate to="/login" />}
         />
         <Route path="/profile/:userId" element={<ProfilePage />} />
+        <Route
+          path="/home"
+          element={user ? <HomePage /> : <Navigate to="/login" />}
+        />
       </Routes>
     </Router>
   );

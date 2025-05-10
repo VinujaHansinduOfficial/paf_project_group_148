@@ -22,6 +22,6 @@ public class Like {
     @Column(name = "post_id", nullable = false)
     private Long postId;
     
-    @Column(name = "created_at")
+    @Column(name = "created_at",columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt = LocalDateTime.now();
 }

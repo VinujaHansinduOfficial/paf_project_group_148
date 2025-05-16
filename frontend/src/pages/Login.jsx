@@ -11,24 +11,31 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validate form fields
-    if (!formData.email || !formData.password) {
-      setError('Please enter both email and password.');
-      return;
+  
+    try {
+      const response = await fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+  
+      const result = await response.json();
+      console.log(result);
+  
+      if (response.ok) {
+        navigate('/home'); // redirect after successful login
+      } else {
+        alert(result.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Error:', error);
     }
-
-    // Reset error
-    setError('');
-
-    // Log form data (simulate login)
-    console.log('Login attempt:', formData);
-
-    // Navigate to home after successful "login"
-    navigate('/home');
   };
+  
 
   return (
     <div className="login-container">

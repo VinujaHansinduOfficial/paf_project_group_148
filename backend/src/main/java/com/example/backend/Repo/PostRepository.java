@@ -11,5 +11,5 @@ public interface PostRepository extends  JpaRepository<Post, Long> {
     // Get all post Without user post
     @Query("SELECT p FROM Post p WHERE p.user.id != :userId")
     List<Post> findAllPostsExceptUser(@Param("userId") Long userId);
-
+    
 }

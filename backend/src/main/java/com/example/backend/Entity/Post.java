@@ -1,6 +1,6 @@
 package com.example.backend.Entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +24,7 @@ import lombok.Data;
 @Data
 @Table(name = "Posts")
 public class Post {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
@@ -37,13 +37,13 @@ public class Post {
 
     @CreationTimestamp
     @Column(name = "created_at",columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at",columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostImage> images;
-
+    
 }

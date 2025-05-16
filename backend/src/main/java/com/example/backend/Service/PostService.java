@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.DOT.request.PostSaveRequestDto;
@@ -15,6 +17,7 @@ import com.example.backend.Repo.PostRepository;
 import com.example.backend.Repo.UserRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,7 +36,7 @@ public class PostService {
 
     @Autowired
     private  UserRepository userRepository;
-
+    
     @Autowired
     private ModelMapper modelMapper;
 
@@ -43,7 +46,7 @@ public class PostService {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-
+        
         Post post = new Post();
         post.setDescription(request.getDescription());
         post.setUser(user);
@@ -60,7 +63,7 @@ public class PostService {
                 postImage.setExtension(image.getExtension());
                 postImageRepository.save(postImage);
             });
-        }
+        }   
     }
 
     @Transactional
@@ -93,7 +96,7 @@ public class PostService {
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
-
+        
         postRepository.delete(post);
 
         postImageRepository.deleteAllImagesByPostId(post.getPostId());
@@ -109,7 +112,7 @@ public class PostService {
         List<PostImageResponseDto> imageUrls = new ArrayList<>();
 
         if(images.size() > 0){
-
+         
             for (PostImage image : images) {
                 PostImageResponseDto dto = new PostImageResponseDto();
                 dto.setId(image.getId());
@@ -119,7 +122,7 @@ public class PostService {
                 dto.setUpdatedAt(image.getUpdatedAt().toString());
                 imageUrls.add(dto);
             }
-
+            
         }
         postResponseDto.setUser(userResponseDto);
         postResponseDto.setImageUrls(imageUrls);
@@ -140,7 +143,7 @@ public class PostService {
             List<PostImageResponseDto> imageUrls = new ArrayList<>();
 
             if(images.size() > 0){
-
+             
                 for (PostImage image : images) {
                     PostImageResponseDto dto = new PostImageResponseDto();
                     dto.setId(image.getId());
@@ -150,15 +153,15 @@ public class PostService {
                     dto.setUpdatedAt(image.getUpdatedAt().toString());
                     imageUrls.add(dto);
                 }
-
+                
             }
-
+            
             postResponseDto.setUser(userResponseDto);
             postResponseDto.setImageUrls(imageUrls);
 
             postResponseDtos.add(postResponseDto);
         }
-
+        
         return postResponseDtos;
     }
 }

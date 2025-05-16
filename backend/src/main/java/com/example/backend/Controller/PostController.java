@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/posts")
@@ -45,9 +47,9 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
+    
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> putMethodName(@PathVariable Long id, @RequestBody PostSaveRequestDto request) {
+    public ResponseEntity<?> putMethodName(@PathVariable Long id, @RequestBody PostSaveRequestDto request) {    
         try {
             if(request.getDescription().isEmpty()){
                 return ResponseEntity.badRequest().body("Description cannot be empty");
@@ -59,7 +61,7 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
+    
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
         try {

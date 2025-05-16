@@ -1,6 +1,6 @@
 package com.example.backend.Entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -35,10 +35,10 @@ public class PostImage {
 
     @CreationTimestamp
     @Column(name = "created_at",columnDefinition = "TIMESTAMP")
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at",columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
 
 }

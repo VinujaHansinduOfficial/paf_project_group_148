@@ -30,4 +30,14 @@ public class LikeController {
     public ResponseEntity<Boolean> hasUserLiked(@RequestParam Long userId, @RequestParam Long postId) {
         return ResponseEntity.ok(likeService.hasUserLiked(userId, postId));
     }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteLikeByUserAndPost(@RequestParam Long userId, @RequestParam Long postId) {
+        try {
+            likeService.deleteLikeByUserAndPost(userId, postId);
+            return ResponseEntity.ok("Like deleted successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

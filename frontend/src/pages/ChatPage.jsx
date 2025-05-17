@@ -170,137 +170,174 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="chat-container">
-      <Inbox userId={user.id} onSelectUser={setSelectedUserId} />
+    <div
+      className="main-content"
+      style={{
+        marginLeft: 0,
+        transition: "margin-left 0.3s",
+        maxWidth: "none",
+        marginRight: 0,
+        marginTop: -38, // move chat page even more to the top
+        marginBottom: 32,
+        paddingLeft: 0,
+        paddingRight: 0,
+        display: "flex",
+        justifyContent: "flex-end",
+        overflow: "hidden", // remove scroll bar from main container
+        height: "100vh", // ensure container fills viewport height
+      }}
+    >
+      <div
+        className="chat-container"
+        style={{
+          width: "95vw",
+          maxWidth: 1400,
+          margin: 0,
+          fontSize: "1rem",
+          background: "#fff",
+          borderRadius: 12,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+          padding: 24,
+          maxheight: 300,
+        }}
+      >
+        <Inbox userId={user.id} onSelectUser={setSelectedUserId} />
 
-      <div className="chat-window">
-        {selectedUserId ? (
-          <>
-            <div
-              className="chat-header"
-              style={{ display: "flex", alignItems: "center" }}
-            >
-              <ListItemAvatar>
-                <Avatar sx={{ width: 56, height: 56 }}>
-                  <img
-                    src={`profileimg.jpeg`}
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </Avatar>
-              </ListItemAvatar>
-              <h2 style={{ textAlign: "center", flex: 1, marginLeft: "10px" }}>
-                {selectedUsername}
-              </h2>
-            </div>
-            <div className="messages">
-              {chatMessages.map((msg, index) => (
-                <div
-                  key={msg.id}
-                  className={
-                    msg.senderId === user.id ? "message me" : "message other"
-                  }
-                >
-                  <div className="text">{msg.message}</div>
-                  <div className="timestamp">
-                    {new Date(msg.timestamp).toLocaleString()}
-                  </div>
-                  {index === chatMessages.length - 1 &&
-                    msg.senderId === user.id && (
-                      <div className="icon-button-container">
-                        <IconButton
-                          ref={anchorRef}
-                          id="composition-button"
-                          aria-controls={open ? "composition-menu" : undefined}
-                          aria-expanded={open ? "true" : undefined}
-                          aria-haspopup="true"
-                          onClick={handleToggle}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Popper
-                          open={open}
-                          anchorEl={anchorRef.current}
-                          role={undefined}
-                          placement="bottom-start"
-                          transition
-                          disablePortal
-                        >
-                          {({ TransitionProps, placement }) => (
-                            <Grow
-                              {...TransitionProps}
-                              style={{
-                                transformOrigin:
-                                  placement === "bottom-start"
-                                    ? "left top"
-                                    : "left bottom",
-                              }}
-                            >
-                              <Paper>
-                                <ClickAwayListener onClickAway={handleClose}>
-                                  <MenuList
-                                    autoFocusItem={open}
-                                    id="composition-menu"
-                                    aria-labelledby="composition-button"
-                                    onKeyDown={handleListKeyDown}
-                                  >
-                                    <MenuItem onClick={handleDeleteLastMessage}>
-                                      Delete
-                                    </MenuItem>
-                                    <MenuItem
-                                      onClick={() => {
-                                        const lastMessage = chatMessages
-                                          .filter(
-                                            (msg) => msg.senderId === user.id
-                                          )
-                                          .pop();
-                                        if (lastMessage) {
-                                          const updatedMessage = prompt(
-                                            "Enter the updated message:",
-                                            lastMessage.message
-                                          );
-                                          if (updatedMessage !== null) {
-                                            handleUpdateMessage(
-                                              lastMessage.id,
-                                              updatedMessage
-                                            );
-                                          }
-                                        }
-                                      }}
-                                    >
-                                      Update
-                                    </MenuItem>
-                                  </MenuList>
-                                </ClickAwayListener>
-                              </Paper>
-                            </Grow>
-                          )}
-                        </Popper>
-                      </div>
-                    )}
-                </div>
-              ))}
-            </div>
-            <div className="message-input">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={handleInputChange}
-                placeholder="Type a message..."
-              />
-              <Button
-                variant="contained"
-                endIcon={<SendIcon />}
-                onClick={handleSendMessage}
+        <div className="chat-window">
+          {selectedUserId ? (
+            <>
+              <div
+                className="chat-header"
+                style={{ display: "flex", alignItems: "center" }}
               >
-                Send
-              </Button>
+                <ListItemAvatar>
+                  <Avatar sx={{ width: 56, height: 56 }}>
+                    <img
+                      src={`profileimg.jpeg`}
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  </Avatar>
+                </ListItemAvatar>
+                <h2
+                  style={{
+                    textAlign: "center",
+                    flex: 1,
+                    marginLeft: "10px",
+                  }}
+                >
+                  {selectedUsername}
+                </h2>
+              </div>
+              <div className="messages">
+                {chatMessages.map((msg, index) => (
+                  <div
+                    key={msg.id}
+                    className={
+                      msg.senderId === user.id ? "message me" : "message other"
+                    }
+                  >
+                    <div className="text">{msg.message}</div>
+                    <div className="timestamp">
+                      {new Date(msg.timestamp).toLocaleString()}
+                    </div>
+                    {index === chatMessages.length - 1 &&
+                      msg.senderId === user.id && (
+                        <div className="icon-button-container">
+                          <IconButton
+                            ref={anchorRef}
+                            id="composition-button"
+                            aria-controls={open ? "composition-menu" : undefined}
+                            aria-expanded={open ? "true" : undefined}
+                            aria-haspopup="true"
+                            onClick={handleToggle}
+                          >
+                            <MoreVertIcon />
+                          </IconButton>
+                          <Popper
+                            open={open}
+                            anchorEl={anchorRef.current}
+                            role={undefined}
+                            placement="bottom-start"
+                            transition
+                            disablePortal
+                          >
+                            {({ TransitionProps, placement }) => (
+                              <Grow
+                                {...TransitionProps}
+                                style={{
+                                  transformOrigin:
+                                    placement === "bottom-start"
+                                      ? "left top"
+                                      : "left bottom",
+                                }}
+                              >
+                                <Paper>
+                                  <ClickAwayListener onClickAway={handleClose}>
+                                    <MenuList
+                                      autoFocusItem={open}
+                                      id="composition-menu"
+                                      aria-labelledby="composition-button"
+                                      onKeyDown={handleListKeyDown}
+                                    >
+                                      <MenuItem onClick={handleDeleteLastMessage}>
+                                        Delete
+                                      </MenuItem>
+                                      <MenuItem
+                                        onClick={() => {
+                                          const lastMessage = chatMessages
+                                            .filter(
+                                              (msg) => msg.senderId === user.id
+                                            )
+                                            .pop();
+                                          if (lastMessage) {
+                                            const updatedMessage = prompt(
+                                              "Enter the updated message:",
+                                              lastMessage.message
+                                            );
+                                            if (updatedMessage !== null) {
+                                              handleUpdateMessage(
+                                                lastMessage.id,
+                                                updatedMessage
+                                              );
+                                            }
+                                          }
+                                        }}
+                                      >
+                                        Update
+                                      </MenuItem>
+                                    </MenuList>
+                                  </ClickAwayListener>
+                                </Paper>
+                              </Grow>
+                            )}
+                          </Popper>
+                        </div>
+                      )}
+                  </div>
+                ))}
+              </div>
+              <div className="message-input">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={handleInputChange}
+                  placeholder="Type a message..."
+                />
+                <Button
+                  variant="contained"
+                  endIcon={<SendIcon />}
+                  onClick={handleSendMessage}
+                >
+                  Send
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="empty-chat">
+              <p>Select a user from the inbox to start chatting.</p>
             </div>
-          </>
-        ) : (
-          <div className="empty-chat">
-            <p>Select a user from the inbox to start chatting.</p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

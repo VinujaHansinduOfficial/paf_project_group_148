@@ -3,7 +3,10 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import "./Profile.css";
-import Post from "../components/Post"; // Adjust the import path as necessary
+//import Post from "../components/Post"; // Adjust the import path as necessary
+import Post from "../components/post/Post";
+import { toast } from "sonner";
+import { getPostById } from "../api/postApi"; // changed import
 
 const Profile = () => {
   const { userId } = useParams();
@@ -13,6 +16,7 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("post");
   const [followers, setFollowers] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [posts, setPosts] = useState([]);
 
   const checkIfFollowing = async (loggedInUserId, targetUserId) => {
     try {
@@ -40,6 +44,26 @@ const Profile = () => {
       });
     }
   }, [loggedInUser, userId]);
+
+  useEffect(() => {
+    getUserPosts();
+  }, [userId]);
+  const getUserPosts = async () => {
+    try {
+      const response = await getPostById(userId); // fetch posts by userId
+      if (response.status === 200) {
+        // Ensure posts is always an array
+        const data = response.data;
+        setPosts(Array.isArray(data) ? data : data ? [data] : []);
+      } else {
+        toast.error("Error fetching posts");
+        setPosts([]);
+      }
+    } catch (error) {
+      toast.error("Error fetching posts:", error);
+      setPosts([]);
+    }
+  };
 
   useEffect(() => {
     if (activeTab === "followers") {
@@ -179,21 +203,16 @@ const Profile = () => {
         {activeTab === "post" && (
           <div className="user-posts">
             <h2>Posts</h2>
-            {loggedInUser && loggedInUser.id === Number(userId) ? (
-              <Post postid="2" likecount={5} commentcount={2} />
-            ) : (
-              <div className="user-posts">
-                <h2>Posts</h2>
-                <p>Posts will be displayed here.</p>
-              </div>
-            )}
+            {(Array.isArray(posts) ? posts : []).map((post, index) => (
+              <Post key={index} post={post} getAllPosts={getUserPosts} />
+            ))}
           </div>
         )}
         {activeTab === "About" && (
           <div className="user-details">
             <h2>User Details</h2>
             <div className="details-grid">
-              <Detail label="Email" value={user.email} />
+              <Detail label="Name" value={user.name} />
               <Detail label="Username" value={user.username} />
               <Detail label="Status history" value="Activated" />
               <Detail label="Joined" value="13/05/2009" />

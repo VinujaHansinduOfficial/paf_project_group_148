@@ -6,7 +6,7 @@ import "./Profile.css";
 //import Post from "../components/Post"; // Adjust the import path as necessary
 import Post from "../components/post/Post";
 import { toast } from "sonner";
-import { getPostById } from "../api/postApi"; // changed import
+import { getPostsByUserId } from "../api/postApi"; // changed import
 
 const Profile = () => {
   const { userId } = useParams();
@@ -50,7 +50,7 @@ const Profile = () => {
   }, [userId]);
   const getUserPosts = async () => {
     try {
-      const response = await getPostById(userId); // fetch posts by userId
+      const response = await getPostsByUserId(userId); // use getPostsByUserId
       if (response.status === 200) {
         // Ensure posts is always an array
         const data = response.data;

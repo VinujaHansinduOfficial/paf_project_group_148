@@ -93,4 +93,12 @@ public class PostController {
         }
     }
 
+    // PostController.java
+    @GetMapping("/getByUserId/{userId}")
+    public ResponseEntity<List<PostResponseDto>> getPostsByUser(@PathVariable Long userId) {
+        List<PostResponseDto> posts = postService.getPostsByUser(userId);
+        return ResponseEntity.ok(posts);
+    }
+
+
 }

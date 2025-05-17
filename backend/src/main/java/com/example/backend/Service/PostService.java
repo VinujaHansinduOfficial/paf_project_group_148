@@ -164,4 +164,40 @@ public class PostService {
         
         return postResponseDtos;
     }
+
+    public List<PostResponseDto> getPostsByUser(Long userId) {
+        // Check if the user exists
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Post> posts = postRepository.findByUser_Id(userId);
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+
+        for (Post post : posts) {
+            PostResponseDto postResponseDto = modelMapper.map(post, PostResponseDto.class);
+            UserResponseDto userResponseDto = modelMapper.map(post.getUser(), UserResponseDto.class);
+
+            List<PostImage> images = post.getImages();
+            List<PostImageResponseDto> imageUrls = new ArrayList<>();
+
+            if (images != null && !images.isEmpty()) {
+                for (PostImage image : images) {
+                    PostImageResponseDto dto = new PostImageResponseDto();
+                    dto.setId(image.getId());
+                    dto.setImageUrl(image.getImageUrl());
+                    dto.setExtension(image.getExtension());
+                    dto.setCreatedAt(image.getCreatedAt().toString());
+                    dto.setUpdatedAt(image.getUpdatedAt().toString());
+                    imageUrls.add(dto);
+                }
+            }
+
+            postResponseDto.setUser(userResponseDto);
+            postResponseDto.setImageUrls(imageUrls);
+            postResponseDtos.add(postResponseDto);
+        }
+
+        return postResponseDtos;
+    }
+
 }

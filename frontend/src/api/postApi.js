@@ -21,3 +21,7 @@ export const getPostById = (postId) => {
 export const updatePost = (postId, post) => {
   return axios.put(`${BASE_URL}update/${postId}`, post);
 };
+
+export const getPostsByUserId = (userId) => {
+  return axios.get(`${BASE_URL}getByUserId/${userId}`);
+};

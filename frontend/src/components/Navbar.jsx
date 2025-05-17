@@ -29,7 +29,7 @@ const Navbar = () => {
         <div className="nav-brand">
           <Link to="/" className="brand-link">
             <FaGraduationCap className="brand-icon" />
-            <span>Skill Sharing Platform</span>
+            <span>EduConnect</span>
           </Link>
           <button 
             className="mobile-menu-btn"

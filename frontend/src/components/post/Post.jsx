@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Button, Dropdown, Menu, Popconfirm } from "antd";
-import {
-  HeartOutlined,
-  MessageOutlined,
-  SearchOutlined,
-  ShareAltOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
+import { FiEdit2, FiTrash2, FiShare2 } from "react-icons/fi";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { BiCommentDetail } from "react-icons/bi";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import MediaGallery from "./MediaGallery";
-import { CiMenuKebab } from "react-icons/ci";
-import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { deletePost } from "../../api/postApi";
 import { toast } from "sonner";
 import EditPostModel from "./EditPostModel";
@@ -196,13 +192,11 @@ const Post = ({ post, getAllPosts }) => {
   };
 
   const menu = (
-    <Menu>
+    <Menu className="rounded-lg shadow-lg">
       <Menu.Item
         key="edit"
-        icon={<FiEdit />}
-        onClick={() => {
-          setisEditModelOpen(true);
-        }}
+        icon={<FiEdit2 className="text-blue-500" />}
+        className="hover:bg-gray-50"
       >
         Edit
       </Menu.Item>
@@ -212,7 +206,11 @@ const Post = ({ post, getAllPosts }) => {
         okText="Yes"
         cancelText="No"
       >
-        <Menu.Item key="delete" icon={<FiTrash2 />} danger>
+        <Menu.Item
+          key="delete"
+          icon={<FiTrash2 className="text-red-500" />}
+          danger
+        >
           <span>Delete</span>
         </Menu.Item>
       </Popconfirm>
@@ -346,8 +344,8 @@ const Post = ({ post, getAllPosts }) => {
             <Dropdown overlay={menu} trigger={["click"]}>
               <Button
                 shape="circle"
-                className="rotate-90"
-                icon={<CiMenuKebab />}
+                className="hover:bg-gray-100 transition-colors border-none shadow-none"
+                icon={<BsThreeDotsVertical className="text-gray-500" />}
               />
             </Dropdown>
           )}
@@ -370,28 +368,35 @@ const Post = ({ post, getAllPosts }) => {
         <div className="flex justify-between pt-3 border-t border-gray-200">
           {likedByCurrentUser ? (
             <button
-              className="flex items-center gap-1 text-gray-600 hover:bg-gray-100 px-2 py-1 rounded-md transition-colors"
+              className="flex items-center gap-2 text-red-500 bg-white border border-black px-4 py-2 rounded-full transition-all duration-200 ease-in-out hover:bg-red-50"
               onClick={handleUnlike}
             >
-              <HeartOutlined /> Unlike
+              <AiFillHeart className="text-xl" /> 
+              <span className="font-medium">Unlike</span>
             </button>
           ) : (
             <button
-              className="flex items-center gap-1 text-gray-600 hover:bg-gray-100 px-2 py-1 rounded-md transition-colors"
+              className="flex items-center gap-2 text-gray-600 bg-white border border-black px-4 py-2 rounded-full transition-all duration-200 ease-in-out hover:bg-gray-50 hover:text-red-500"
               onClick={handleLike}
             >
-              <HeartOutlined /> Like
+              <AiOutlineHeart className="text-xl" />
+              <span className="font-medium">Like</span>
             </button>
           )}
+          
           <button
-            className="flex items-center gap-1 text-gray-600 hover:bg-gray-100 px-2 py-1 rounded-md transition-colors"
+            className="flex items-center gap-2 text-gray-600 bg-white border border-black px-4 py-2 rounded-full transition-all duration-200 ease-in-out hover:bg-gray-50 hover:text-blue-500"
             onClick={() => setShowCommentInput(true)}
           >
-            <MessageOutlined /> Comment
+            <BiCommentDetail className="text-xl" />
+            <span className="font-medium">Comment</span>
           </button>
 
-          <button className="flex items-center gap-1 text-gray-600 hover:bg-gray-100 px-2 py-1 rounded-md transition-colors">
-            <ShareAltOutlined /> Share
+          <button 
+            className="flex items-center gap-2 text-gray-600 bg-white border border-black px-4 py-2 rounded-full transition-all duration-200 ease-in-out hover:bg-gray-50 hover:text-green-500"
+          >
+            <FiShare2 className="text-xl" />
+            <span className="font-medium">Share</span>
           </button>
         </div>
 
@@ -420,14 +425,14 @@ const Post = ({ post, getAllPosts }) => {
                         style={{ minWidth: 100 }}
                       />
                       <button
-                        className="ml-1 text-green-600 hover:underline text-xs"
+                        className="ml-1 bg-white border border-black text-black px-2 py-1 rounded text-xs hover:bg-gray-50 transition-colors"
                         onClick={() => handleSaveEditComment(comment)}
                         disabled={isPostingComment}
                       >
                         Save
                       </button>
                       <button
-                        className="ml-1 text-gray-500 hover:underline text-xs"
+                        className="ml-1 bg-white border border-black text-black px-2 py-1 rounded text-xs hover:bg-gray-50 transition-colors"
                         onClick={handleCancelEditComment}
                         disabled={isPostingComment}
                       >
@@ -439,13 +444,13 @@ const Post = ({ post, getAllPosts }) => {
                       <span>{comment.content}</span>
                       {/* Edit and Delete buttons for comment */}
                       <button
-                        className="ml-2 text-blue-500 hover:underline text-xs"
+                        className="ml-2 border border-black text-black px-2 py-1 rounded text-xs hover:bg-gray-50 transition-colors"
                         onClick={() => handleEditComment(comment)}
                       >
                         Edit
                       </button>
                       <button
-                        className="ml-1 text-red-500 hover:underline text-xs"
+                        className="ml-1 border border-black text-black px-2 py-1 rounded text-xs hover:bg-gray-50 transition-colors"
                         onClick={() => handleDeleteComment(comment)}
                       >
                         Delete
@@ -470,14 +475,14 @@ const Post = ({ post, getAllPosts }) => {
             />
             <div className="flex gap-2">
               <button
-                className="bg-blue-500 text-white px-3 py-1 rounded"
+                className="bg-white border border-black text-black px-4 py-2 rounded hover:bg-gray-50 transition-colors"
                 onClick={handleAddComment}
                 disabled={isPostingComment}
               >
                 {isPostingComment ? "Posting..." : "Post Comment"}
               </button>
               <button
-                className="bg-gray-300 px-3 py-1 rounded"
+                className="bg-white border border-black text-black px-4 py-2 rounded hover:bg-gray-50 transition-colors"
                 onClick={() => setShowCommentInput(false)}
                 disabled={isPostingComment}
               >

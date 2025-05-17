@@ -19,6 +19,7 @@ const Post = ({ post, getAllPosts }) => {
   const [commentText, setCommentText] = useState("");
   const [isPostingComment, setIsPostingComment] = useState(false);
   const [comments, setComments] = useState([]);
+  const [likesCount, setLikesCount] = useState(0);
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user ? user.id : null;
@@ -76,6 +77,24 @@ const Post = ({ post, getAllPosts }) => {
     checkLikeStatus();
   }, [userId, post?.postId]);
 
+  // Update useEffect for fetching likes count
+  useEffect(() => {
+    const fetchLikesCount = async () => {
+      if (!post?.postId) return;
+      try {
+        const res = await fetch(
+          `http://localhost:8080/api/likes/count/${post.postId}`
+        );
+        const count = await res.json();
+        setLikesCount(Math.max(0, count)); // Ensure count is never negative
+      } catch (err) {
+        console.error("Error fetching likes count:", err);
+        setLikesCount(0); // Default to 0 on error
+      }
+    };
+    fetchLikesCount();
+  }, [post?.postId]);
+
   const handleDelete = async () => {
     try {
       let response = await deletePost(post.postId);
@@ -117,18 +136,18 @@ const Post = ({ post, getAllPosts }) => {
         }),
       });
       if (response.ok) {
-        toast.success("Like toggled!");
-        getAllPosts();
-        window.location.reload(); // Refresh the page
+        setLikedByCurrentUser(true);
+        setLikesCount((prev) => prev + 1);
+        toast.success("Post liked!");
       } else {
-        toast.error("Failed to toggle like.");
+        toast.error("Failed to like post.");
       }
     } catch (err) {
-      toast.error("Error toggling like.");
+      toast.error("Error liking post.");
     }
   };
 
-  // Unlike button handler (for Unlike button only)
+  // Update unlike handler
   const handleUnlike = async () => {
     if (!userId) {
       toast.error("You must be logged in to unlike posts.");
@@ -140,16 +159,15 @@ const Post = ({ post, getAllPosts }) => {
         { method: "DELETE" }
       );
       if (response.ok) {
-        toast.success("Like removed!");
         setLikedByCurrentUser(false);
+        setLikesCount((prev) => Math.max(0, prev - 1)); // Prevent negative counts
         setLikeId(null);
-        getAllPosts();
-        window.location.reload(); // Refresh the page
+        toast.success("Post unliked!");
       } else {
-        toast.error("Failed to remove like.");
+        toast.error("Failed to unlike post.");
       }
     } catch (err) {
-      toast.error("Error removing like.");
+      toast.error("Error unliking post.");
     }
   };
 
@@ -197,6 +215,7 @@ const Post = ({ post, getAllPosts }) => {
         key="edit"
         icon={<FiEdit2 className="text-blue-500" />}
         className="hover:bg-gray-50"
+        onClick={() => setisEditModelOpen(true)}
       >
         Edit
       </Menu.Item>
@@ -284,11 +303,16 @@ const Post = ({ post, getAllPosts }) => {
         }
       );
       if (response.ok) {
+        // Update comment locally
+        setComments(comments.map(c => 
+          c.id === comment.id 
+            ? { ...c, content: editingCommentText }
+            : c
+        ));
         toast.success("Comment updated!");
         setEditingCommentId(null);
         setEditingCommentText("");
         setIsPostingComment(false);
-        getAllPosts();
       } else {
         toast.error("Failed to update comment.");
       }
@@ -311,8 +335,9 @@ const Post = ({ post, getAllPosts }) => {
         { method: "DELETE" }
       );
       if (response.ok) {
+        // Remove comment locally
+        setComments(comments.filter(c => c.id !== comment.id));
         toast.success("Comment deleted!");
-        getAllPosts();
       } else {
         toast.error("Failed to delete comment.");
       }
@@ -360,8 +385,8 @@ const Post = ({ post, getAllPosts }) => {
 
         {/* Post Stats */}
         <div className="flex justify-between text-xs text-gray-500 mb-3">
-          <span>10 likes</span>
-          <span>20comments • 5 shares</span>
+          <span>{likesCount} {likesCount === 1 ? 'like' : 'likes'}</span>
+          <span>{comments.length} comments • 5 shares</span>
         </div>
 
         {/* Post Actions */}
@@ -449,12 +474,18 @@ const Post = ({ post, getAllPosts }) => {
                       >
                         Edit
                       </button>
-                      <button
-                        className="ml-1 border border-black text-black px-2 py-1 rounded text-xs hover:bg-gray-50 transition-colors"
-                        onClick={() => handleDeleteComment(comment)}
+                      <Popconfirm
+                        title="Are you sure you want to delete this comment?"
+                        onConfirm={() => handleDeleteComment(comment)}
+                        okText="Yes"
+                        cancelText="No"
                       >
-                        Delete
-                      </button>
+                        <button
+                          className="ml-1 border border-black text-black px-2 py-1 rounded text-xs hover:bg-gray-50 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </Popconfirm>
                     </>
                   )}
                 </div>
